@@ -4,6 +4,8 @@ const USERS_KEY = 'taskmanager_users';
 const TASKS_KEY = 'taskmanager_tasks';
 const CURRENT_USER_KEY = 'taskmanager_current_user';
 
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 // User Storage
 export const getUsers = (): User[] => {
   const users = localStorage.getItem(USERS_KEY);
@@ -24,6 +26,7 @@ export const saveUser = (user: User): void => {
 };
 
 export const getCurrentUser = (): User | null => {
+  console.log(`Current baseurl: ${baseUrl}`);
   const userId = localStorage.getItem(CURRENT_USER_KEY);
   if (!userId) return null;
   
