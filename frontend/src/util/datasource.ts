@@ -31,6 +31,10 @@ export const registerUser = async (
     credentials: 'include'
   });
 
+  if (res.status === 400) {
+    new Error('Email already in use')
+  }
+
   if (!res.ok) throw new Error("Signup failed");
 
   const { token, user: userData } = await res.json();

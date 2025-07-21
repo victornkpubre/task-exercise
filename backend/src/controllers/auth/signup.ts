@@ -28,7 +28,7 @@ router.post(
         // 1. Check if user exists
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
-          return res.status(400).send({ errors: [{ message: 'Email already in use' }] });
+          return res.status(400).send({ message: 'Email already in use' });
         }
     
         // 2. Hash the password

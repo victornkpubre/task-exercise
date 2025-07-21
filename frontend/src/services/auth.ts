@@ -25,7 +25,7 @@ export const signup = async (
       error: "",
     };
   } catch (err: unknown) {
-    let message = "Signup failed.";
+    let message = "Something went wrong.";
     if (err instanceof Error) {
       message = err.message;
     }
