@@ -32,7 +32,7 @@ export const registerUser = async (
   });
 
   if (res.status === 400) {
-    new Error('Email already in use')
+    throw new Error('Email already in use')
   }
 
   if (!res.ok) throw new Error("Signup failed");
