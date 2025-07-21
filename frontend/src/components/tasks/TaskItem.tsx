@@ -1,10 +1,10 @@
-import { Task } from '@/models/types';
+import { Task } from '@/core/models';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Calendar, Clock, MoreHorizontal, Edit, Trash2, Flag } from 'lucide-react';
-import { cn } from '@/services/utils';
+import { cn } from '@/util/utils';
 
 interface TaskItemProps {
   task: Task;
@@ -27,7 +27,7 @@ const priorityConfig = {
 export const TaskItem = ({ task, onEdit, onDelete }: TaskItemProps) => {
   const status = statusConfig[task.status];
   const priority = priorityConfig[task.extras.priority || 'medium'];
-
+  
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 

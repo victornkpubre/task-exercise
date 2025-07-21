@@ -23,7 +23,7 @@ export const SignupForm = ({ onSuccess, onToggleMode }: SignupFormProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const result = signup(email, password, name);
+    const result = await signup(email, password, name);
     
     if (result.success) {
       toast({

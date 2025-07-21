@@ -1,10 +1,17 @@
-FROM node:alpine
+# Use official Node.js slim image
+FROM node:22-slim
 
 WORKDIR /app
 
+# Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
+# Copy source
 COPY . .
 
-CMD ["npm", "run", "dev"]
+# Build TypeScript code
+RUN npm run build
+
+# Default: Start app
+CMD ["npm", "run", "start"]

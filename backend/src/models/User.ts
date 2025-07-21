@@ -4,6 +4,7 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 export class User extends Model {
   public id!: string;
   public email!: string;
+  public password!: string;
   public name!: string;
   public readonly createdAt!: Date;
 }
@@ -20,8 +21,13 @@ export const initUserModel = (sequelize: Sequelize) => {
       unique: true,
       allowNull: false,
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

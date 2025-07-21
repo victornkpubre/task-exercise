@@ -2,11 +2,13 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { User } from './User';
 
+export type TaskStatus = 'pending' | 'in-progress' | 'done';
+
 export class Task extends Model {
   public id!: string;
   public title!: string;
   public description?: string;
-  public status!: 'todo' | 'in_progress' | 'done';
+  public status!: TaskStatus;
   public extras?: {
     tags?: string[];
     dueDate?: string;
@@ -32,7 +34,7 @@ export const initTaskModel = (sequelize: Sequelize) => {
       type: DataTypes.STRING,
     },
     status: {
-      type: DataTypes.ENUM('todo', 'in_progress', 'done'),
+      type: DataTypes.ENUM('pending', 'in-progress', 'done'),
       allowNull: false,
     },
     extras: {

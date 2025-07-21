@@ -1,28 +1,20 @@
-import dotenv from 'dotenv';
-
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.production' });
-} else {
-  dotenv.config({ path: '.env.development' });
-}
-
-import express, { Request, Response } from 'express';
-import { authRouter } from './controllers/auth';
+// src/index.ts
+import './config/env'; // Load dotenv first
+import { app } from './app';
 import { connectDB } from './config/db';
 
+const PORT = process.env.PORT || 4000;
 
-const app = express();
-app.use(express.json());
+console.log(process.env.NODE_ENV);
 
-
-app.use('/auth', authRouter);
-
-connectDB().then(() => {
-  app.listen(4000, () => {
-    console.log(`Listening on port ${4000}`);
-  });
-}).catch(err => {
-    console.error('Failed to start server:', err);
-});
-
-export default app;
+if (process.env.NODE_ENV !== 'test') {
+  connectDB() 
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}`);
+      });
+    })
+    .catch(err => {
+      console.error('Failed to start server:', err);
+    });
+}

@@ -1,69 +1,89 @@
-import { User } from '@/models/types';
-import { 
-  getUsers, 
-  saveUser, 
-  getCurrentUser, 
-  setCurrentUser, 
-  findUserByEmail, 
-  generateId 
-} from '@/services/cache';
+import { User } from '@/core/models';
+import { clearUserCache, getCurrentUser, getToken, saveUser, setCurrentUser, setToken } from '../util/cache';
+import { registerUser, loginUser, logoutUser } from '@/util/datasource';
 
-export interface AuthResult {
-  success: boolean;
-  user?: User;
-  error?: string;
+interface AuthResponse {
+  success: string;
+  error: string;
 }
 
-export const login = (email: string, password: string): AuthResult => {
-  const user = findUserByEmail(email);
-  
-  if (!user) {
-    return { success: false, error: 'User not found' };
+export const signup = async (
+  email: string,
+  password: string,
+  name: string
+): Promise<AuthResponse> => {
+  try {
+    const result = await registerUser(email, name, password);
+
+    // Save user & token to local cache
+    saveUser(result.user);
+    setToken(result.token);
+    setCurrentUser(result.user.id);
+
+    return {
+      success: "Account created successfully.",
+      error: "",
+    };
+  } catch (err: unknown) {
+    let message = "Signup failed.";
+    if (err instanceof Error) {
+      message = err.message;
+    }
+
+    return {
+      success: "",
+      error: message,
+    };
   }
-  
-  // In a real app, you'd verify the password hash
-  // For this demo, we'll use a simple check
-  if (password.length < 6) {
-    return { success: false, error: 'Invalid password' };
-  }
-  
-  setCurrentUser(user.id);
-  return { success: true, user };
 };
 
-export const signup = (email: string, password: string, name: string): AuthResult => {
-  if (!email || !password || !name) {
-    return { success: false, error: 'All fields are required' };
+export const login = async (
+  email: string,
+  password: string
+): Promise<AuthResponse> => {
+  try {
+    const result = await loginUser(email, password);
+
+    if (!result) {
+      return {
+        success: "",
+        error: "Invalid email or password.",
+      };
+    }
+
+    // Save token and user to cache
+    saveUser(result.user);
+    setToken(result.token);
+    setCurrentUser(result.user.id);
+
+    return {
+      success: "Logged in successfully.",
+      error: "",
+    };
+  } catch (err: unknown) {
+    let message = "Login failed.";
+    if (err instanceof Error) {
+      message = err.message;
+    }
+
+    return {
+      success: "",
+      error: message,
+    };
   }
-  
-  if (password.length < 6) {
-    return { success: false, error: 'Password must be at least 6 characters' };
-  }
-  
-  if (findUserByEmail(email)) {
-    return { success: false, error: 'User already exists' };
-  }
-  
-  const user: User = {
-    id: generateId(),
-    email,
-    name,
-    createdAt: new Date().toISOString(),
-  };
-  
-  saveUser(user);
-  setCurrentUser(user.id);
-  
-  return { success: true, user };
 };
 
-export const logout = (): void => {
-  setCurrentUser(null);
-};
 
-export const isAuthenticated = (): boolean => {
-  return getCurrentUser() !== null;
-};
+export const logout = async (): Promise<boolean> => { 
+  const token = getToken();
+  const result = await logoutUser(token);
+  if (result) {
+    clearUserCache();
+  }
+
+  return result;
+}
+
 
 export const getAuthenticatedUser = (): User | null => {
   return getCurrentUser();

@@ -1,4 +1,4 @@
-import { User } from '@/models/types';
+import { User } from '@/core/models';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -11,9 +11,11 @@ interface HeaderProps {
 }
 
 export const Header = ({ user, onLogout }: HeaderProps) => {
-  const handleLogout = () => {
-    logout();
-    onLogout();
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result) {
+      onLogout();
+    }
   };
 
   const getInitials = (name: string) => {

@@ -1,4 +1,4 @@
-import { Task } from '@/models/types';
+import { Task } from '@/core/models';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Clock, Play, BarChart3 } from 'lucide-react';
 

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Task, TaskFilters, User } from '@/models/types';
-import { getTasks, deleteTask } from '@/services/cache';
+import { useState, useEffect, useCallback } from 'react';
+import { Task, TaskFilters, User } from '@/core/models';
+import { getTasks, deleteTask } from '@/services/task';
 import { Header } from '@/components/layout/Header';
 import { TaskStats } from '@/components/tasks/TaskStats';
 import { TaskFiltersComponent } from '@/components/tasks/TaskFilters';
@@ -23,14 +23,20 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const { toast } = useToast();
 
-  const loadTasks = () => {
-    const userTasks = getTasks(user.id);
-    setTasks(userTasks);
-  };
+  const loadTasks = useCallback(async () => {
+    const userTasks = await getTasks();
+    
+    if(userTasks){
+      setTasks(userTasks);
+    }
+    else {
+      onLogout()
+    }
+  }, [onLogout]);
 
   useEffect(() => {
     loadTasks();
-  }, [user.id]);
+  }, [loadTasks]);
 
   useEffect(() => {
     let filtered = tasks;
@@ -65,10 +71,10 @@ export const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setIsTaskFormOpen(true);
   };
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
-      deleteTask(taskId);
+      await deleteTask(taskId);
       loadTasks();
       toast({
         title: "Task deleted",

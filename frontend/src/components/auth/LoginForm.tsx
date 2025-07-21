@@ -22,7 +22,7 @@ export const LoginForm = ({ onSuccess, onToggleMode }: LoginFormProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const result = login(email, password);
+    const result = await login(email, password);
     
     if (result.success) {
       toast({

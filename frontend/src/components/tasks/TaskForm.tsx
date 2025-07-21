@@ -6,8 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Task, TaskStatus } from '@/models/types';
-import { saveTask, generateId } from '@/services/cache';
+import { Task, TaskStatus } from '@/core/models';
+import { saveTask, generateId } from '@/services/task';
 import { getAuthenticatedUser } from '@/services/auth';
 import { useToast } from '@/hooks/use-toast';
 import { X, Plus } from 'lucide-react';
@@ -59,7 +59,7 @@ export const TaskForm = ({ task, open, onOpenChange, onTaskSaved }: TaskFormProp
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!title.trim()) {
@@ -90,14 +90,24 @@ export const TaskForm = ({ task, open, onOpenChange, onTaskSaved }: TaskFormProp
       userId: user.id,
     };
 
-    saveTask(taskData);
-    
-    toast({
-      title: task ? "Task updated" : "Task created",
-      description: `"${taskData.title}" has been ${task ? 'updated' : 'created'} successfully.`,
-    });
+    const result = await saveTask(taskData, task?.id);
 
-    onTaskSaved();
+    if(result) {
+      toast({
+        title: task ? "Task updated" : "Task created",
+        description: `"${taskData.title}" has been ${task ? 'updated' : 'created'} successfully.`,
+      });
+
+      onTaskSaved();
+    }
+    else {
+      toast({
+        title: task ? "Task update failed" : "Task creation failed",
+        description: "Somethng went wrong",
+        variant: "destructive",
+      });
+    }
+    
     onOpenChange(false);
   };
 
@@ -164,15 +174,6 @@ export const TaskForm = ({ task, open, onOpenChange, onTaskSaved }: TaskFormProp
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="dueDate">Due Date</Label>
-            <Input
-              id="dueDate"
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </div>
 
           <div className="space-y-2">
             <Label>Tags</Label>

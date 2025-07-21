@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { getAuthenticatedUser } from '@/services/auth';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { SignupForm } from '@/components/auth/SignupForm';
-import { Dashboard } from '@/components/dashboard/Dashboard';
-import { User } from '@/models/types';
+import { Dashboard } from './Dashboard'; 
+import { User } from '@/core/models';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,6 +34,7 @@ const Index = () => {
   }
 
   if (user) {
+    console.log(user);
     return <Dashboard user={user} onLogout={handleLogout} />;
   }
 

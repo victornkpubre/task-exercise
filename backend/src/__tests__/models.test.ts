@@ -7,7 +7,11 @@
 
   describe('User & Task Models', () => {
     it('creates a user and a task', async () => {
-      const user = await User.create({ email: 'a@test.com', name: 'Alice' });
+      const user = await User.create({ 
+        email: 'a@test.com', 
+        password: '123456789',
+        name: 'Alice' 
+      });
       expect(user.id).toBeDefined();
 
       const task = await Task.create({
@@ -19,3 +23,5 @@
       expect(task.userId).toBe(user.id);
     });
   });
+
+  
