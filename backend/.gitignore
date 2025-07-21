@@ -8,3 +8,8 @@ dist/
 
 # Logs
 *.log
+
+tests/
+**/*.test.ts
+jest.config.js
+tsconfig.test.json
