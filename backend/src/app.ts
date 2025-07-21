@@ -8,7 +8,7 @@ loadEnv();
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:8080', 'http://frontend:8080'],
+    origin: ['http://localhost:8080', 'http://frontend:8080', 'https://task-exercise.vercel.app'],
     credentials: true
   }));
 app.use(express.json());
